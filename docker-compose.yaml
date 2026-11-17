@@ -1,0 +1,35 @@
+services:
+  backend:
+    image: banking_backend:1.0
+    container_name: banking_backend
+    expose:
+      - "8000"
+    volumes:
+      - bank_data:/app
+    networks:
+      - banking-net
+
+  frontend:
+    image: banking_frontend:1.0
+    container_name: banking_frontend
+    expose:
+      - "80"
+    networks:
+      - banking-net
+
+  proxy:
+    image: banking_proxy:1.0
+    container_name: banking_proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - banking-net
+
+volumes:
+  bank_data:
+
+networks:
+  banking-net:
