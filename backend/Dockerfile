@@ -4,12 +4,17 @@ FROM python:3.11-slim
 # Imposta la cartella di lavoro dentro il container
 WORKDIR /app
 
-# Copia e installa le dipendenze
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Installa git per clonare il repository
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copia il codice sorgente
-COPY . .
+# Clona il repository e copia i file del backend in /app
+RUN git clone https://github.com/didesco/SSS2026.git /tmp/repo \
+    && cp -r /tmp/repo/backend/* /app/ \
+    && rm -rf /tmp/repo
+
+# Installa le dipendenze
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Esporta la porta su cui gira Uvicorn
 EXPOSE 8000
